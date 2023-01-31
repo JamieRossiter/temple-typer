@@ -5,23 +5,22 @@
 */
 
 // Create windows underneath enemies for field combat
-function Window_TypingCombat(prompt, enemyNameId){
+function Window_TypingPrompt(prompt, enemy){
     this.initialize.apply(this);
     this._initPrompt = prompt;
-    this._enemyNameId = enemyNameId;
+    this._associatedEnemy = enemy;
 }
 
-Window_TypingCombat.prototype = Object.create(Window_Base.prototype);
-Window_TypingCombat.prototype.constructor = Window_TypingCombat;
+Window_TypingPrompt.prototype = Object.create(Window_Base.prototype);
+Window_TypingPrompt.prototype.constructor = Window_TypingPrompt;
 
-Window_TypingCombat.prototype.initialize = function(){
+Window_TypingPrompt.prototype.initialize = function(){
     Window_Base.prototype.initialize.call(this, new Rectangle(0, 0, 1000, 60));
-    this._associatedEnemy = undefined;
+    this.setBackgroundType(0);
 }
 
-Window_TypingCombat.prototype.update = function(){
+Window_TypingPrompt.prototype.update = function(){
     this.contents.clear();
-    if(!this._associatedEnemy) this._associatedEnemy = this.getEnemyByNameId(this._enemyNameId);
 
     // Draw text
     this.drawTextEx(
@@ -36,40 +35,48 @@ Window_TypingCombat.prototype.update = function(){
     // Follow enemy based on name ID
     this.width = this.textWidth(this._initPrompt) + 25;
     this.x = (this._associatedEnemy.screenX() - this.width) + (this.width / 2);
-    this.y = this._associatedEnemy.screenY() + 10;
+    this.y = this._associatedEnemy.screenY();
 
 }
 
-Window_TypingCombat.prototype.initPromptIsBeingTyped = function(){
+Window_TypingPrompt.prototype.initPromptIsBeingTyped = function(){
     return $gameTyping.prompt() === this._initPrompt;
 }
 
-Window_TypingCombat.prototype.formattedUntyped = function(){
+Window_TypingPrompt.prototype.formattedUntyped = function(){
     const typed = $gameTyping.typed();
     return `\\c[7]${typed.length > 0 ? this._initPrompt.split(typed)[1] : this._initPrompt}\\c[0]`;
 }
 
-Window_TypingCombat.prototype.formattedTyped = function(){
+Window_TypingPrompt.prototype.formattedTyped = function(){
     return `\\c[0]${$gameTyping.typed()}\\c[0]`;
 }
 
-Window_TypingCombat.prototype.formattedInitPrompt = function(){
+Window_TypingPrompt.prototype.formattedInitPrompt = function(){
     return `\\c[7]${this._initPrompt}\\c[0]`;
 }
 
-Window_TypingCombat.prototype.getEnemyByNameId = function(id){
-    const enemy = $gameMap.events().find(ev => {
-        return ev.event().name.includes(`enemy_${id}`);
-    })
-    if(!enemy) return;
-    if(!enemy.event()) return;
-    if(!enemy.event().name) return;
-    return enemy;
+// Create typing error window
+function Window_TypingError(){
+    this.initialize.apply(this, arguments);
 }
 
-// Scene Map for testing
-const typing_sceneMap_start_alias = Scene_Map.prototype.start;
-Scene_Map.prototype.start = function(){
-    typing_sceneMap_start_alias.call(this);
-    this.addChild(new Window_TypingCombat("hello", 1));
+Window_TypingError.prototype = Object.create(Window_Base.prototype);
+Window_TypingError.prototype.constructor = Window_TypingError;
+
+Window_TypingError.prototype.initialize = function(){
+    Window_Base.prototype.initialize.call(this, new Rectangle(500, 500, 500, 60));
+}
+
+Window_TypingError.prototype.update = function(){
+    this.contents.clear();
+    this.hide();
+    if($gameTyping.currentIncorrectKey()){
+        this.show();
+        const errorText = `\\c[2]'${$gameTyping.currentIncorrectKey()}'\\c[0] doesn't match any prompts!`;
+        const textWidth = this.textWidth(errorText);
+        this.width = textWidth - 105;
+        this.drawTextEx(errorText, 0, 0);
+    }
+    this.x = (Graphics.boxWidth / 2) - (this.width / 2);
 }
