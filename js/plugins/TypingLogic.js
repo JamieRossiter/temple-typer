@@ -15,7 +15,6 @@ Game_Typing.prototype.initialize = function(){
     this._currentIncorrectKey = "";
     this._prompt = "";
     this._typed = "";
-    this._TESTwords = ["HELLO", "WORLD", "COOL"];
     document.addEventListener("keydown", this.listenToKeyEvent.bind(this));
 }
 
@@ -74,7 +73,7 @@ Game_Typing.prototype.isNormalKeyPressed = function(){
 }
 
 Game_Typing.prototype.isCorrectKeyPressed = function(){
-    return this.untyped()[0] === this._currentKey;
+    return this._prompt[this._typed.length] === this._currentKey;
 }
 
 Game_Typing.prototype.isBackspacePressed = function(){
@@ -109,19 +108,14 @@ Game_Typing.prototype.prompt = function(){
     return this._prompt;
 }
 
-Game_Typing.prototype.untyped = function(){
-    if(this._typed.length > 0) return this._prompt.split(this._typed)[1];
-    else return this._prompt;
-}
-
 Game_Typing.prototype.promptExistsBasedOnInitialKey = function(){
-    return this._TESTwords.find(word => {
+    return $gameCombat.getCurrentEnemyPrompts().find(word => {
         return word[0] === this._currentKey;
     })
 }
 
 Game_Typing.prototype.selectPromptBasedOnInitialKey = function(){
-    const word = this._TESTwords.find(word => {
+    const word = $gameCombat.getCurrentEnemyPrompts().find(word => {
         return word[0] === this._currentKey;
     })
     this._prompt = word;
@@ -134,6 +128,7 @@ Game_Typing.prototype.clearTyped = function(){
 Game_Typing.prototype.clearPrompt = function(){
     this._prompt = "";
 }
+
 // TODO: Move function to player logic
 Game_Typing.prototype.activateShootAnimation = function(){
     const playerAnimShootSwitch = 21;

@@ -23,14 +23,8 @@ Window_TypingPrompt.prototype.update = function(){
     this.contents.clear();
 
     // Draw text
-    this.drawTextEx(
-        `${
-            this.initPromptIsBeingTyped() ? 
-            (this.formattedTyped() + this.formattedUntyped()) : 
-            this.formattedInitPrompt()
-        }`, 
-        0, 0
-    );
+    this.drawTextEx(`\\c[7]${this._initPrompt}\\c[0]`, 0, 0);
+    if(this.initPromptIsBeingTyped()) this.drawTextEx(`\\c[0]${$gameTyping.typed()}\\c[0]`, 0, 0);
 
     // Follow enemy based on name ID
     this.width = this.textWidth(this._initPrompt) + 25;
@@ -43,12 +37,7 @@ Window_TypingPrompt.prototype.initPromptIsBeingTyped = function(){
     return $gameTyping.prompt() === this._initPrompt;
 }
 
-Window_TypingPrompt.prototype.formattedUntyped = function(){
-    const typed = $gameTyping.typed();
-    return `\\c[7]${typed.length > 0 ? this._initPrompt.split(typed)[1] : this._initPrompt}\\c[0]`;
-}
-
-Window_TypingPrompt.prototype.formattedTyped = function(){
+Window_TypingPrompt.prototype.getFormattedTyped = function(){
     return `\\c[0]${$gameTyping.typed()}\\c[0]`;
 }
 

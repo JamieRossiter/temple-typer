@@ -10,6 +10,7 @@ function Game_Combat(){
 
 Game_Combat.prototype.initialize = function(){
     this._mapScene = undefined;
+    this._promptList = [];
     this._enemies = [];
     this._promptWindows = [];
     this._enemySpawnIds = {
@@ -22,10 +23,12 @@ Game_Combat.prototype.initialize = function(){
         "shaman_elite": 7,
         "teleporter_elite": 8
     }
+    this.loadPrompts();
 }
 
 Game_Combat.prototype.start = function(mapScene){
     this._mapScene = mapScene;
+    mapScene.addChild(new Window_TypingError());
 }
 
 Game_Combat.prototype.findEnemies = function(){
@@ -37,17 +40,48 @@ Game_Combat.prototype.findEnemies = function(){
 Game_Combat.prototype.createPromptWindows = function(){
     if(!this._mapScene) return;
     this._enemies.forEach((enemy) => {
-        if(!enemy.hasPromptWindow()) this._mapScene.addChild(new Window_TypingPrompt("HELLO", enemy));
+        if(!enemy.hasPromptWindow()){
+            const randomPrompt = this.getRandomPrompt();
+            enemy.setCurrentPrompt(randomPrompt);
+            this._mapScene.addChild(new Window_TypingPrompt(randomPrompt, enemy));
+        }
         enemy.setHasPromptWindow(true);
     })
 }
 
 Game_Combat.prototype.spawnEnemies = function(){
     // TODO: Create different enemy configurations!
-    Galv.SPAWN.event(3, "regions", [1], "all", false);
-    Galv.SPAWN.event(6, "regions", [1], "all", false);
+    Galv.SPAWN.event(3, "regions", [1], "terrain", false);
+    Galv.SPAWN.event(6, "regions", [1], "terrain", false);
     this.findEnemies();
     this.createPromptWindows();
+}
+
+Game_Combat.prototype.loadPrompts = function(){
+    fetch("./data/words.txt")
+    .then(res => res.text())
+    .then(data => {
+        const capitalized = data.toUpperCase();
+        const words = capitalized.split("\n");
+        this._promptList = words;
+    });
+}
+
+Game_Combat.prototype.getRandomPrompt = function(){
+    const currentEnemyPrompts = this.getCurrentEnemyPrompts();
+    let isUnique = false;
+    let prompt = "";
+    while(!isUnique){
+        prompt = this._promptList[Math.floor(Math.random() * this._promptList.length)];
+        if(prompt && !currentEnemyPrompts.includes(prompt)) isUnique = true;
+    }
+    return prompt;
+}
+
+Game_Combat.prototype.getCurrentEnemyPrompts = function(){
+    return this._enemies.map(enemy => {
+        return enemy.currentPrompt();
+    })
 }
 
 const $gameCombat = new Game_Combat();
@@ -59,6 +93,14 @@ Game_Event.prototype.hasPromptWindow = function(){
 
 Game_Event.prototype.setHasPromptWindow = function(promptWindow){
     this._hasPromptWindow = promptWindow;
+}
+
+Game_Event.prototype.currentPrompt = function(){
+    return this._currentPrompt;
+}
+
+Game_Event.prototype.setCurrentPrompt = function(prompt){
+    this._currentPrompt = prompt;
 }
 
 // Scene Map Overrides
