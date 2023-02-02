@@ -6970,6 +6970,7 @@ Game_CharacterBase.prototype.initMembers = function() {
     this._jumpCount = 0;
     this._jumpPeak = 0;
     this._movementSuccess = true;
+    this._isEnemyBeingDamaged = false; // Edited by Jamie Rossiter
 };
 
 Game_CharacterBase.prototype.pos = function(x, y) {

@@ -53,9 +53,13 @@ Game_Typing.prototype.listenToKeyEvent = function(keyEvent){
 
     // Check if prompt typed
     if(this.isTyped()){
-        this.activateShootAnimation();
-        this.clearPrompt();
-        this.clearTyped();
+        $gameCombat.playPlayerShootAnimation();
+        $gameCombat.getCurrentEnemy().setIsEnemyBeingDamaged(true);
+        $gameCombat.playEnemyHitAnimation();
+        setTimeout(() => {
+            this.clearPrompt();
+            this.clearTyped();
+        }, 500)
     }
 
 }
@@ -127,12 +131,6 @@ Game_Typing.prototype.clearTyped = function(){
 
 Game_Typing.prototype.clearPrompt = function(){
     this._prompt = "";
-}
-
-// TODO: Move function to player logic
-Game_Typing.prototype.activateShootAnimation = function(){
-    const playerAnimShootSwitch = 21;
-    $gameSwitches.setValue(playerAnimShootSwitch, true);
 }
 
 const $gameTyping = new Game_Typing();

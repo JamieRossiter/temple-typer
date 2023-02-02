@@ -51,8 +51,7 @@ Game_Combat.prototype.createPromptWindows = function(){
 
 Game_Combat.prototype.spawnEnemies = function(){
     // TODO: Create different enemy configurations!
-    Galv.SPAWN.event(3, "regions", [1], "terrain", false);
-    Galv.SPAWN.event(6, "regions", [1], "terrain", false);
+    Galv.SPAWN.event(1, "regions", [1], "terrain", false);
     this.findEnemies();
     this.createPromptWindows();
 }
@@ -73,7 +72,10 @@ Game_Combat.prototype.getRandomPrompt = function(){
     let prompt = "";
     while(!isUnique){
         prompt = this._promptList[Math.floor(Math.random() * this._promptList.length)];
-        if(prompt && !currentEnemyPrompts.includes(prompt)) isUnique = true;
+        const promptInitialLetters = currentEnemyPrompts.map(enemyPrompt => enemyPrompt[0]);
+        if(prompt && !currentEnemyPrompts.includes(prompt) && !promptInitialLetters.includes(prompt[0])){
+            isUnique = true;
+        }
     }
     return prompt;
 }
@@ -82,6 +84,22 @@ Game_Combat.prototype.getCurrentEnemyPrompts = function(){
     return this._enemies.map(enemy => {
         return enemy.currentPrompt();
     })
+}
+
+Game_Combat.prototype.getCurrentEnemy = function(){
+    return this._enemies.find(enemy => {
+        return enemy.currentPrompt() === $gameTyping.prompt();
+    })
+}
+
+Game_Combat.prototype.playPlayerShootAnimation = function(){
+    const playerAnimShootSwitch = 21;
+    $gameSwitches.setValue(playerAnimShootSwitch, true);
+}
+
+Game_Combat.prototype.playEnemyHitAnimation = function(){
+    const enemyHitAnimSelfSwitch = "A";
+    $gameSelfSwitches.setValue([$gameMap.mapId(), this.getCurrentEnemy().eventId(), enemyHitAnimSelfSwitch], true);
 }
 
 const $gameCombat = new Game_Combat();
@@ -102,6 +120,20 @@ Game_Event.prototype.currentPrompt = function(){
 Game_Event.prototype.setCurrentPrompt = function(prompt){
     this._currentPrompt = prompt;
 }
+
+// Game_CharacterBase Overrides
+Game_CharacterBase.prototype.setIsEnemyBeingDamaged = function(damaged){
+    this._isEnemyBeingDamaged = damaged;
+}
+
+Game_CharacterBase.prototype.updatePattern = function() {
+    if(this._isEnemyBeingDamaged) return;
+    if (!this.hasStepAnime() && this._stopCount > 0) {
+        this.resetPattern();
+    } else {
+        this._pattern = (this._pattern + 1) % this.maxPattern();
+    }
+};
 
 // Scene Map Overrides
 const combat_sceneMap_start_alias = Scene_Map.prototype.start;
