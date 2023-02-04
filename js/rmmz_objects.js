@@ -6970,7 +6970,6 @@ Game_CharacterBase.prototype.initMembers = function() {
     this._jumpCount = 0;
     this._jumpPeak = 0;
     this._movementSuccess = true;
-    this._isEnemyBeingDamaged = false; // Edited by Jamie Rossiter
 };
 
 Game_CharacterBase.prototype.pos = function(x, y) {
@@ -9136,8 +9135,6 @@ Game_Event.prototype.constructor = Game_Event;
 
 Game_Event.prototype.initialize = function(mapId, eventId) {
     Game_Character.prototype.initialize.call(this);
-    this._hasPromptWindow = false; // Added by Jamie Rossiter
-    this._currentPrompt = "" // Added by Jamie Rossiter
     this._mapId = mapId;
     this._eventId = eventId;
     this.locate(this.event().x, this.event().y);

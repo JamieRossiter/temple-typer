@@ -55,11 +55,13 @@ Game_Typing.prototype.listenToKeyEvent = function(keyEvent){
     if(this.isTyped()){
         $gameCombat.playPlayerShootAnimation();
         $gameCombat.getCurrentEnemy().setIsEnemyBeingDamaged(true);
+        $gameScreen.startBetterShake(10, 7, false);
+        $gameScreen.startFlash([255, 255, 255, 255], 5);
         $gameCombat.playEnemyHitAnimation();
-        setTimeout(() => {
-            this.clearPrompt();
-            this.clearTyped();
-        }, 500)
+        $gameCombat.destroyPromptWindow(this._prompt);
+        $gameCombat.getCurrentEnemy().setIsAlive(false);
+        this.clearPrompt();
+        this.clearTyped();
     }
 
 }
@@ -113,16 +115,16 @@ Game_Typing.prototype.prompt = function(){
 }
 
 Game_Typing.prototype.promptExistsBasedOnInitialKey = function(){
-    return $gameCombat.getCurrentEnemyPrompts().find(word => {
-        return word[0] === this._currentKey;
+    return $gameCombat.getCurrentEnemyPrompts().find(promptObj => {
+        if(promptObj) return promptObj.prompt[0] === this._currentKey;
     })
 }
 
 Game_Typing.prototype.selectPromptBasedOnInitialKey = function(){
-    const word = $gameCombat.getCurrentEnemyPrompts().find(word => {
-        return word[0] === this._currentKey;
+    const word = $gameCombat.getCurrentEnemyPrompts().find(promptObj => {
+        if(promptObj && promptObj.isAlive) return promptObj.prompt[0] === this._currentKey;
     })
-    this._prompt = word;
+    this._prompt = word.prompt;
 }
 
 Game_Typing.prototype.clearTyped = function(){

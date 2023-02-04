@@ -458,7 +458,7 @@ function Game_SpawnEvent() {
     this.initialize.apply(this, arguments);
 }
 
-Game_SpawnEvent.prototype = Object.create(Game_Event.prototype);
+Game_SpawnEvent.prototype = Object.create(Game_TypingEnemyEvent.prototype);
 Game_SpawnEvent.prototype.constructor = Game_SpawnEvent;
 
 Game_SpawnEvent.prototype.initialize = function(mapId,eventId,x,y,spawnEventId,saveEvent,targetId) {
@@ -467,7 +467,7 @@ Game_SpawnEvent.prototype.initialize = function(mapId,eventId,x,y,spawnEventId,s
 	this._spawnEventId = spawnEventId;
 	this.isSpawnEvent = true;
 	this.isSavedEvent = saveEvent;
-	Game_Event.prototype.initialize.call(this,mapId,eventId);
+	Game_TypingEnemyEvent.prototype.initialize.call(this,mapId,eventId);
 	this._spawnCharId = targetId;
 	DataManager.extractMetadata(this.event());
 };

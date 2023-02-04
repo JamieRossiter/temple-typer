@@ -45,6 +45,10 @@ Window_TypingPrompt.prototype.formattedInitPrompt = function(){
     return `\\c[7]${this._initPrompt}\\c[0]`;
 }
 
+Window_TypingPrompt.prototype.initPrompt = function(){
+    return this._initPrompt;
+}
+
 // Create typing error window
 function Window_TypingError(){
     this.initialize.apply(this, arguments);

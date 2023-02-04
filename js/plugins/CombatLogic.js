@@ -41,12 +41,22 @@ Game_Combat.prototype.createPromptWindows = function(){
     if(!this._mapScene) return;
     this._enemies.forEach((enemy) => {
         if(!enemy.hasPromptWindow()){
-            const randomPrompt = this.getRandomPrompt();
+            const randomPrompt = this.getRandomPrompt(enemy);
             enemy.setCurrentPrompt(randomPrompt);
-            this._mapScene.addChild(new Window_TypingPrompt(randomPrompt, enemy));
+            const newPromptWindow = new Window_TypingPrompt(randomPrompt, enemy);
+            this._promptWindows.push(newPromptWindow);
+            this._mapScene.addChild(newPromptWindow);
         }
         enemy.setHasPromptWindow(true);
     })
+}
+
+Game_Combat.prototype.destroyPromptWindow = function(prompt){
+    const targetPromptWindow = this._promptWindows.find(window => {
+        return prompt === window.initPrompt();
+    })
+    if(!targetPromptWindow) return;
+    this._mapScene.removeChild(targetPromptWindow);
 }
 
 Game_Combat.prototype.spawnEnemies = function(){
@@ -72,8 +82,12 @@ Game_Combat.prototype.getRandomPrompt = function(){
     let prompt = "";
     while(!isUnique){
         prompt = this._promptList[Math.floor(Math.random() * this._promptList.length)];
-        const promptInitialLetters = currentEnemyPrompts.map(enemyPrompt => enemyPrompt[0]);
-        if(prompt && !currentEnemyPrompts.includes(prompt) && !promptInitialLetters.includes(prompt[0])){
+        const promptInitialLetters = currentEnemyPrompts.map(enemyPromptObj => {
+            if(enemyPromptObj && enemyPromptObj.isAlive) return enemyPromptObj.prompt[0];
+        });
+        console.log("Prompt initial letters", promptInitialLetters);
+        const currentRawPrompts = currentEnemyPrompts.map(promptObj => promptObj.prompt);
+        if(prompt && !currentRawPrompts.includes(prompt) && !promptInitialLetters.includes(prompt[0])){
             isUnique = true;
         }
     }
@@ -82,13 +96,19 @@ Game_Combat.prototype.getRandomPrompt = function(){
 
 Game_Combat.prototype.getCurrentEnemyPrompts = function(){
     return this._enemies.map(enemy => {
-        return enemy.currentPrompt();
+        return { prompt: enemy.currentPrompt(), isAlive: enemy.isAlive() };
     })
 }
 
 Game_Combat.prototype.getCurrentEnemy = function(){
     return this._enemies.find(enemy => {
         return enemy.currentPrompt() === $gameTyping.prompt();
+    })
+}
+
+Game_Combat.prototype.getEnemyBasedOnPrompt = function(prompt){
+    return this._enemies.find(enemy => {
+        return enemy.currentPrompt() === prompt;
     })
 }
 
@@ -103,37 +123,6 @@ Game_Combat.prototype.playEnemyHitAnimation = function(){
 }
 
 const $gameCombat = new Game_Combat();
-
-// Game_Event overrides
-Game_Event.prototype.hasPromptWindow = function(){
-    return this._hasPromptWindow;
-}
-
-Game_Event.prototype.setHasPromptWindow = function(promptWindow){
-    this._hasPromptWindow = promptWindow;
-}
-
-Game_Event.prototype.currentPrompt = function(){
-    return this._currentPrompt;
-}
-
-Game_Event.prototype.setCurrentPrompt = function(prompt){
-    this._currentPrompt = prompt;
-}
-
-// Game_CharacterBase Overrides
-Game_CharacterBase.prototype.setIsEnemyBeingDamaged = function(damaged){
-    this._isEnemyBeingDamaged = damaged;
-}
-
-Game_CharacterBase.prototype.updatePattern = function() {
-    if(this._isEnemyBeingDamaged) return;
-    if (!this.hasStepAnime() && this._stopCount > 0) {
-        this.resetPattern();
-    } else {
-        this._pattern = (this._pattern + 1) % this.maxPattern();
-    }
-};
 
 // Scene Map Overrides
 const combat_sceneMap_start_alias = Scene_Map.prototype.start;
