@@ -12,6 +12,7 @@ Game_Combat.prototype.initialize = function(){
     this._mapScene = undefined;
     this._promptList = [];
     this._enemies = [];
+    this._arrows = [];
     this._promptWindows = [];
     this._enemySpawnIds = {
         "warrior_normal": 1,
@@ -35,6 +36,22 @@ Game_Combat.prototype.findEnemies = function(){
     this._enemies = $gameMap.events().filter(ev => {
         return ev.event().note.includes(`<enemy>`);
     })
+}
+
+Game_Combat.prototype.findArrows = function(){
+    this._arrows = $gameMap.events().filter(ev => {
+        return ev.event().note.includes(`<arrow>`);
+    })
+    this._arrows.forEach(ev => {
+        ev.setIsArrow(true);
+    })
+    this.findEnemies();
+}
+
+Game_Combat.prototype.hasArrowCollidedWithEvent = function(eventId){
+    const arrowEvs = this._arrows;
+    const currentEv = $gameMap.event(eventId);
+    return arrowEvs.some(arrow => arrow.x === currentEv.x && arrow.y === currentEv.y);
 }
 
 Game_Combat.prototype.createPromptWindows = function(){
@@ -61,8 +78,17 @@ Game_Combat.prototype.destroyPromptWindow = function(prompt){
 
 Game_Combat.prototype.spawnEnemies = function(){
     // TODO: Create different enemy configurations!
-    Galv.SPAWN.event(1, "regions", [1], "terrain", false);
+    Galv.SPAWN.event(2, "regions", [3], "terrain", false);
+    Galv.SPAWN.event(1, "regions", [3, 2, 1], "terrain", false);
     this.findEnemies();
+    this.createPromptWindows();
+}
+
+Game_Combat.prototype.spawnArrow = function(enemyEventId){
+    const eventX = $gameMap.event(enemyEventId).x - 1;
+    const eventY = $gameMap.event(enemyEventId).y;
+    Galv.SPAWN.event(9, "xy", [eventX, eventY], "terrain", false);
+    this.findArrows();
     this.createPromptWindows();
 }
 
@@ -85,7 +111,6 @@ Game_Combat.prototype.getRandomPrompt = function(){
         const promptInitialLetters = currentEnemyPrompts.map(enemyPromptObj => {
             if(enemyPromptObj && enemyPromptObj.isAlive) return enemyPromptObj.prompt[0];
         });
-        console.log("Prompt initial letters", promptInitialLetters);
         const currentRawPrompts = currentEnemyPrompts.map(promptObj => promptObj.prompt);
         if(prompt && !currentRawPrompts.includes(prompt) && !promptInitialLetters.includes(prompt[0])){
             isUnique = true;

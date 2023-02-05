@@ -29,7 +29,7 @@ Window_TypingPrompt.prototype.update = function(){
     // Follow enemy based on name ID
     this.width = this.textWidth(this._initPrompt) + 25;
     this.x = (this._associatedEnemy.screenX() - this.width) + (this.width / 2);
-    this.y = this._associatedEnemy.screenY();
+    this.y = this._associatedEnemy.isArrow() ? this._associatedEnemy.screenY() - 40 : this._associatedEnemy.screenY();
 
 }
 

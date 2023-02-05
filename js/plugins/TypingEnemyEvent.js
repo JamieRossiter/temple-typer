@@ -17,6 +17,7 @@ Game_TypingEnemyEvent.prototype.initialize = function(mapId, eventId){
     this._currentPrompt = "";
     this._isAlive = true;
     this._isEnemyBeingDamaged = false;
+    this._isArrow = false;
 }
 
 Game_TypingEnemyEvent.prototype.hasPromptWindow = function(){
@@ -55,3 +56,11 @@ Game_TypingEnemyEvent.prototype.updatePattern = function() {
         this._pattern = (this._pattern + 1) % this.maxPattern();
     }
 };
+
+Game_TypingEnemyEvent.prototype.isArrow = function(){
+    return this._isArrow;
+}
+
+Game_TypingEnemyEvent.prototype.setIsArrow = function(arrow){
+    this._isArrow = arrow;
+}
