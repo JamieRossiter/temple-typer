@@ -62,6 +62,7 @@ Game_Combat.prototype.createPromptWindows = function(){
             enemy.setCurrentPrompt(randomPrompt);
             const newPromptWindow = new Window_TypingPrompt(randomPrompt, enemy);
             this._promptWindows.push(newPromptWindow);
+            enemy.setPromptWindow(newPromptWindow);
             this._mapScene.addChild(newPromptWindow);
         }
         enemy.setHasPromptWindow(true);
@@ -78,8 +79,8 @@ Game_Combat.prototype.destroyPromptWindow = function(prompt){
 
 Game_Combat.prototype.spawnEnemies = function(){
     // TODO: Create different enemy configurations!
-    Galv.SPAWN.event(2, "regions", [3], "terrain", false);
-    Galv.SPAWN.event(1, "regions", [3, 2, 1], "terrain", false);
+    Galv.SPAWN.event(3, "regions", [3], "terrain", false);
+    // Galv.SPAWN.event(1, "regions", [3, 2, 1], "terrain", false);
     this.findEnemies();
     this.createPromptWindows();
 }
@@ -87,10 +88,7 @@ Game_Combat.prototype.spawnEnemies = function(){
 Game_Combat.prototype.spawnArrow = function(enemyEventId){
     const eventX = $gameMap.event(enemyEventId).x - 1;
     const eventY = $gameMap.event(enemyEventId).y;
-    console.log("ARROW EV X", eventX);
-    console.log("ARROW EV Y", eventY);
     Galv.SPAWN.event(9, "xy", [eventX, eventY], "all", false);
-    console.log("SPAWNED ARROW FOR EVENT: " + enemyEventId);
     this.findArrows();
     this.createPromptWindows();
 }

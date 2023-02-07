@@ -14,6 +14,7 @@ Game_TypingEnemyEvent.prototype.constructor = Game_TypingEnemyEvent;
 Game_TypingEnemyEvent.prototype.initialize = function(mapId, eventId){
     Game_Event.prototype.initialize.call(this, mapId, eventId);
     this._hasPromptWindow = false; 
+    this._promptWindow = undefined;
     this._currentPrompt = "";
     this._isAlive = true;
     this._isEnemyBeingDamaged = false;
@@ -26,6 +27,14 @@ Game_TypingEnemyEvent.prototype.hasPromptWindow = function(){
 
 Game_TypingEnemyEvent.prototype.setHasPromptWindow = function(promptWindow){
     this._hasPromptWindow = promptWindow;
+}
+
+Game_TypingEnemyEvent.prototype.promptWindow = function(){
+    return this._promptWindow;
+}
+
+Game_TypingEnemyEvent.prototype.setPromptWindow = function(promptWindow){
+    this._promptWindow = promptWindow;
 }
 
 Game_TypingEnemyEvent.prototype.currentPrompt = function(){

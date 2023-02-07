@@ -17,10 +17,16 @@ Window_TypingPrompt.prototype.constructor = Window_TypingPrompt;
 Window_TypingPrompt.prototype.initialize = function(){
     Window_Base.prototype.initialize.call(this, new Rectangle(-1000, -1000, 1000, 60));
     this.setBackgroundType(0);
+    this._fadeType = undefined;
 }
 
 Window_TypingPrompt.prototype.update = function(){
     this.contents.clear();
+
+    // Handle prompt fade out/fade in for shaman enemies
+    if(this._fadeType === "fadeOut") this.fadeOut();
+    if(this._fadeType === "fadeIn") this.fadeIn();
+    this.contentsOpacity = this.opacity;
 
     // Draw text
     this.drawTextEx(`\\c[7]${this._initPrompt}\\c[0]`, 0, 0);
@@ -47,6 +53,14 @@ Window_TypingPrompt.prototype.formattedInitPrompt = function(){
 
 Window_TypingPrompt.prototype.initPrompt = function(){
     return this._initPrompt;
+}
+
+Window_TypingPrompt.prototype.fadeOut = function(){
+    if(this.opacity > 0) this.opacity -= 5;
+}
+
+Window_TypingPrompt.prototype.fadeIn = function(){
+    if(this.opacity < 255) this.opacity += 5;
 }
 
 // Create typing error window
