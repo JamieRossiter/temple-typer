@@ -87,7 +87,10 @@ Game_Combat.prototype.spawnEnemies = function(){
 Game_Combat.prototype.spawnArrow = function(enemyEventId){
     const eventX = $gameMap.event(enemyEventId).x - 1;
     const eventY = $gameMap.event(enemyEventId).y;
-    Galv.SPAWN.event(9, "xy", [eventX, eventY], "terrain", false);
+    console.log("ARROW EV X", eventX);
+    console.log("ARROW EV Y", eventY);
+    Galv.SPAWN.event(9, "xy", [eventX, eventY], "all", false);
+    console.log("SPAWNED ARROW FOR EVENT: " + enemyEventId);
     this.findArrows();
     this.createPromptWindows();
 }

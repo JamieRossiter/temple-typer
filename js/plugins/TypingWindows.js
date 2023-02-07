@@ -15,7 +15,7 @@ Window_TypingPrompt.prototype = Object.create(Window_Base.prototype);
 Window_TypingPrompt.prototype.constructor = Window_TypingPrompt;
 
 Window_TypingPrompt.prototype.initialize = function(){
-    Window_Base.prototype.initialize.call(this, new Rectangle(0, 0, 1000, 60));
+    Window_Base.prototype.initialize.call(this, new Rectangle(-1000, -1000, 1000, 60));
     this.setBackgroundType(0);
 }
 

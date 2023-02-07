@@ -28,6 +28,10 @@ Game_Typing.prototype.listenToKeyEvent = function(keyEvent){
     // Handle prompt selection
     if(this._typed.length <= 0 && this.isNormalKeyPressed() && this.promptExistsBasedOnInitialKey()){
         this.selectPromptBasedOnInitialKey();
+        if(!this._prompt){
+            this._currentIncorrectKey = key;
+            return;
+        }
         this.addKeyToTyped();
         this._currentIncorrectKey = "";
         return;
@@ -79,7 +83,7 @@ Game_Typing.prototype.isNormalKeyPressed = function(){
 }
 
 Game_Typing.prototype.isCorrectKeyPressed = function(){
-    return this._prompt[this._typed.length] === this._currentKey;
+    return (this._prompt[this._typed.length] === this._currentKey) && (this._prompt.length > 0);
 }
 
 Game_Typing.prototype.isBackspacePressed = function(){
@@ -124,6 +128,10 @@ Game_Typing.prototype.selectPromptBasedOnInitialKey = function(){
     const word = $gameCombat.getCurrentEnemyPrompts().find(promptObj => {
         if(promptObj && promptObj.isAlive) return promptObj.prompt[0] === this._currentKey;
     })
+    if(!word){
+        this._prompt = "";
+        return;
+    }
     this._prompt = word.prompt;
 }
 
