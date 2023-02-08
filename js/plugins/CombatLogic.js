@@ -79,9 +79,9 @@ Game_Combat.prototype.destroyPromptWindow = function(prompt){
 
 Game_Combat.prototype.spawnEnemies = function(){
     // TODO: Create different enemy configurations!
-    Galv.SPAWN.event(4, "regions", [4], "terrain", false);
+    // Galv.SPAWN.event(4, "regions", [4], "terrain", false);
     // Galv.SPAWN.event(3, "regions", [3], "terrain", false);
-    // Galv.SPAWN.event(1, "regions", [3, 2, 1], "terrain", false);
+    Galv.SPAWN.event(1, "regions", [3, 2, 1], "terrain", false);
     this.findEnemies();
     this.createPromptWindows();
 }
@@ -146,7 +146,21 @@ Game_Combat.prototype.playPlayerShootAnimation = function(){
 
 Game_Combat.prototype.playEnemyHitAnimation = function(){
     const enemyHitAnimSelfSwitch = "A";
+    const otherSelfSwitches = ["B", "C", "D"];
+    // Turn off all other self switches
+    otherSelfSwitches.forEach(selfSwitch => {
+        $gameSelfSwitches.setValue([$gameMap.mapId(), this.getCurrentEnemy().eventId(), selfSwitch], false);
+    })
+    // Turn on hit anim self switch
     $gameSelfSwitches.setValue([$gameMap.mapId(), this.getCurrentEnemy().eventId(), enemyHitAnimSelfSwitch], true);
+}
+
+Game_Combat.prototype.playEnemyAttackAnimations = function(){
+    const enemyAttackAnimSelfSwitch = "D";
+    this.enemiesInAttackZone().forEach(enemy => {
+        enemy.setHasAttackAnimPlayed(true);
+        $gameSelfSwitches.setValue([$gameMap.mapId(), enemy.eventId(), enemyAttackAnimSelfSwitch], true);
+    })
 }
 
 Game_Combat.prototype.teleportToRegion = function(eventId, region){
@@ -164,6 +178,19 @@ Game_Combat.prototype.teleportToRegion = function(eventId, region){
     $gameMap.event(eventId).setPosition(randomX, randomY);
 }
 
+Game_Combat.prototype.findCombatPlayer = function(){
+    return $gameMap.events().find(ev => ev.event().note.includes("<player>"));
+}
+
+Game_Combat.prototype.enemiesInAttackZone = function(){
+    const combatPlayer = this.findCombatPlayer();
+    const enemies = this._enemies;
+    return enemies.filter(enemy => {
+        if(enemy.hasAttackAnimPlayed()) return;
+        return enemy.x === combatPlayer.x;
+    });
+}
+
 const $gameCombat = new Game_Combat();
 
 // Scene Map Overrides
@@ -176,4 +203,5 @@ Scene_Map.prototype.start = function(){
 const combat_sceneMap_update_alias = Scene_Map.prototype.update;
 Scene_Map.prototype.update = function(){
     combat_sceneMap_update_alias.call(this);
+    if($gameCombat.enemiesInAttackZone().length > 0) $gameCombat.playEnemyAttackAnimations();
 }

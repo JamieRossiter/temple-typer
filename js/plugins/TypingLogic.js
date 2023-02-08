@@ -58,7 +58,6 @@ Game_Typing.prototype.listenToKeyEvent = function(keyEvent){
     // Check if prompt typed
     if(this.isTyped()){
         $gameCombat.playPlayerShootAnimation();
-        $gameCombat.getCurrentEnemy().setIsEnemyBeingDamaged(true);
         $gameScreen.startBetterShake(10, 7, false);
         $gameScreen.startFlash([255, 255, 255, 255], 5);
         $gameCombat.playEnemyHitAnimation();
