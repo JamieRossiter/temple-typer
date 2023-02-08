@@ -79,7 +79,8 @@ Game_Combat.prototype.destroyPromptWindow = function(prompt){
 
 Game_Combat.prototype.spawnEnemies = function(){
     // TODO: Create different enemy configurations!
-    Galv.SPAWN.event(3, "regions", [3], "terrain", false);
+    Galv.SPAWN.event(4, "regions", [4], "terrain", false);
+    // Galv.SPAWN.event(3, "regions", [3], "terrain", false);
     // Galv.SPAWN.event(1, "regions", [3, 2, 1], "terrain", false);
     this.findEnemies();
     this.createPromptWindows();
@@ -146,6 +147,21 @@ Game_Combat.prototype.playPlayerShootAnimation = function(){
 Game_Combat.prototype.playEnemyHitAnimation = function(){
     const enemyHitAnimSelfSwitch = "A";
     $gameSelfSwitches.setValue([$gameMap.mapId(), this.getCurrentEnemy().eventId(), enemyHitAnimSelfSwitch], true);
+}
+
+Game_Combat.prototype.teleportToRegion = function(eventId, region){
+    let spawnLocs = [];
+    const width = $gameMap.width();
+    const height = $gameMap.height();
+    for (let x = 0; x < width; x++) {
+        for (let y = 0; y < height; y++) {
+            if ($gameMap.regionId(x,y) === region) spawnLocs.push([x,y]);
+        };
+    };
+    const randomLocs = spawnLocs[Math.floor(Math.random() * spawnLocs.length)];
+    const randomX = randomLocs[0];
+    const randomY = randomLocs[1];
+    $gameMap.event(eventId).setPosition(randomX, randomY);
 }
 
 const $gameCombat = new Game_Combat();
