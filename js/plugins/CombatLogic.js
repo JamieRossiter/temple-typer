@@ -11,6 +11,7 @@ function Game_Combat(){
 Game_Combat.prototype.initialize = function(){
     this._mapScene = undefined;
     this._promptList = [];
+    this._configurationList = [];
     this._enemies = [];
     this._arrows = [];
     this._promptWindows = [];
@@ -25,6 +26,7 @@ Game_Combat.prototype.initialize = function(){
         "teleporter_elite": 8
     }
     this.loadPrompts();
+    this.loadConfigurations();
 }
 
 Game_Combat.prototype.start = function(mapScene){
@@ -77,14 +79,27 @@ Game_Combat.prototype.destroyPromptWindow = function(prompt){
     this._mapScene.removeChild(targetPromptWindow);
 }
 
-Game_Combat.prototype.spawnEnemies = function(){
-    // TODO: Create different enemy configurations!
-    // Galv.SPAWN.event(4, "regions", [4], "terrain", false);
-    // Galv.SPAWN.event(3, "regions", [3], "terrain", false);
-    Galv.SPAWN.event(2, "regions", [3], "terrain", false);
-    // Galv.SPAWN.event(1, "regions", [3, 2, 1], "terrain", false);
+Game_Combat.prototype.spawnEnemies = function(difficulty){
+    const enemyDict = { 
+        "warrior": { evId: 1, regions: [1, 2, 3] }, 
+        "archer": { evId: 2, regions: [3] }, 
+        "shaman": { evId: 3, regions: [3] }, 
+        "teleporter": { evId: 4, regions: [4] }
+    };
+    const configuration = this.selectConfiguration(difficulty);
+    // Spawn enemies
+    for (const [enemy, amount] of Object.entries(configuration)) {
+        const enemyData = enemyDict[enemy];
+        for(let i = 0; i < amount; i++) Galv.SPAWN.event(enemyData.evId, "regions", enemyData.regions, "terrain", false);
+    }
     this.findEnemies();
     this.createPromptWindows();
+}
+
+Game_Combat.prototype.selectConfiguration = function(difficulty){
+    if(!Object.keys(this._configurationList).includes(difficulty)) return;
+    const configsBasedOnDifficulty = this._configurationList[difficulty];
+    return configsBasedOnDifficulty[Math.floor(Math.random() * configsBasedOnDifficulty.length)];
 }
 
 Game_Combat.prototype.spawnArrow = function(enemyEventId){
@@ -103,6 +118,15 @@ Game_Combat.prototype.loadPrompts = function(){
         const words = capitalized.split("\n");
         this._promptList = words;
     });
+}
+
+Game_Combat.prototype.loadConfigurations = function(){
+    fetch("./data/EnemySpawnConfigurations.json")
+    .then(res => res.json())
+    .then(data => {
+        if(!data) return;
+        this._configurationList = data.configurations;
+    })
 }
 
 Game_Combat.prototype.getRandomPrompt = function(){

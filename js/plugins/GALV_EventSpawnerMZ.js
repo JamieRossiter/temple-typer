@@ -215,7 +215,6 @@ Galv.SPAWN.event = function(eventId,type,data,overlap,save,targetId = 0) {
 		// Spawn X,Y position
 		const x = data[0];
 		const y = data[1];
-		console.log("CAN SPAWN", Galv.SPAWN.canSpawnOn(x,y));
 		if (Galv.SPAWN.canSpawnOn(x,y)) $gameMap.spawnEvent(eventId,x,y,save,targetId);
 	};
 };

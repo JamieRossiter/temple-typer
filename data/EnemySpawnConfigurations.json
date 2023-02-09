@@ -1,0 +1,40 @@
+{
+    "configurations": {
+        "easy": [
+            { "warrior": 1 },
+            { "warrior": 2 },
+            { "warrior": 3 },
+            { "archer": 1 },
+            { "shaman": 1 }, 
+            { "warrior": 1, "archer": 1 },
+            { "warrior": 2, "archer": 1 },
+            { "warrior": 1, "teleporter": 1 },
+            { "warrior": 2, "teleporter": 1 },
+            { "teleporter": 1 }
+        ],
+        "normal": [
+            { "archer": 2 },
+            { "warrior": 1, "archer": 2 },
+            { "warrior": 1, "shaman": 1 },
+            { "warrior": 2, "shaman": 1 },
+            { "archer": 1, "shaman": 1 },
+            { "shaman": 2 },
+            { "teleporter": 2, "warrior": 2 }
+        ],
+        "hard": [
+            { "archer": 2, "shaman": 2 },
+            { "archer": 1, "shaman": 2 },
+            { "archer": 2, "shaman": 1 },
+            { "shaman": 2, "teleporter": 1 },
+            { "teleporter": 3, "archer": 1, "shaman": 1 }
+        ],
+        "expert": [
+            { "archer": 3, "shaman": 2 },
+            { "teleporter": 3, "shaman": 2 },
+            { "warrior": 3, "shaman": 3 },
+            { "warrior": 3, "archer": 3 },
+            { "teleporter": 3, "archer": 3 },
+            { "warrior": 3, "archer": 2, "teleporter": 2 }
+        ] 
+    }
+}
