@@ -55,7 +55,7 @@ Game_Typing.prototype.listenToKeyEvent = function(keyEvent){
         this._currentIncorrectKey = "";
     }
 
-    // Check if prompt typed
+    // Check if prompt typed (TODO: Move all functions within if statement to combat logic)
     if(this.isTyped()){
         $gameCombat.playPlayerShootAnimation();
         $gameScreen.startBetterShake(10, 7, false);

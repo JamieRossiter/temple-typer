@@ -81,7 +81,8 @@ Game_Combat.prototype.spawnEnemies = function(){
     // TODO: Create different enemy configurations!
     // Galv.SPAWN.event(4, "regions", [4], "terrain", false);
     // Galv.SPAWN.event(3, "regions", [3], "terrain", false);
-    Galv.SPAWN.event(1, "regions", [3, 2, 1], "terrain", false);
+    Galv.SPAWN.event(2, "regions", [3], "terrain", false);
+    // Galv.SPAWN.event(1, "regions", [3, 2, 1], "terrain", false);
     this.findEnemies();
     this.createPromptWindows();
 }
