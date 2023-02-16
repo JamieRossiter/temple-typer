@@ -35,7 +35,7 @@ Window_PlayerLives.prototype.update = function(){
         } else {
             this._maxLifeX += 45;
         }
-        this.drawCharacter("player/pirate_heads", 0, this._maxLifeX, 95);
+        this.drawCharacter("player/pirate_heads_transparent", 0, this._maxLifeX, 95);
     }
     this.width = this._maxLifeX + 50;
 }

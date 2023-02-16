@@ -80,18 +80,19 @@ Game_Combat.prototype.destroyPromptWindow = function(prompt){
 }
 
 Game_Combat.prototype.spawnEnemies = function(difficulty){
-    const enemyDict = { 
-        "warrior": { evId: 1, regions: [1, 2, 3] }, 
-        "archer": { evId: 2, regions: [3] }, 
-        "shaman": { evId: 3, regions: [3] }, 
-        "teleporter": { evId: 4, regions: [4] }
-    };
-    const configuration = this.selectConfiguration(difficulty);
-    // Spawn enemies
-    for (const [enemy, amount] of Object.entries(configuration)) {
-        const enemyData = enemyDict[enemy];
-        for(let i = 0; i < amount; i++) Galv.SPAWN.event(enemyData.evId, "regions", enemyData.regions, "terrain", false);
-    }
+    // const enemyDict = { 
+    //     "warrior": { evId: 1, regions: [1, 2, 3] }, 
+    //     "archer": { evId: 2, regions: [3] }, 
+    //     "shaman": { evId: 3, regions: [3] }, 
+    //     "teleporter": { evId: 4, regions: [4] }
+    // };
+    // const configuration = this.selectConfiguration(difficulty);
+    // // Spawn enemies
+    // for (const [enemy, amount] of Object.entries(configuration)) {
+    //     const enemyData = enemyDict[enemy];
+    //     for(let i = 0; i < amount; i++) Galv.SPAWN.event(enemyData.evId, "regions", enemyData.regions, "terrain", false);
+    // }
+    Galv.SPAWN.event(1, "regions", [3], "terrain", false);
     this.findEnemies();
     this.createPromptWindows();
 }
@@ -182,8 +183,10 @@ Game_Combat.prototype.playEnemyHitAnimation = function(){
 
 Game_Combat.prototype.playEnemyAttackAnimations = function(){
     const enemyAttackAnimSelfSwitch = "D";
+    const allEnemiesAttackSwitch = 24;
     this.enemiesInAttackZone().forEach(enemy => {
         enemy.setHasAttackAnimPlayed(true);
+        $gameSwitches.setValue(allEnemiesAttackSwitch, true);
         $gameSelfSwitches.setValue([$gameMap.mapId(), enemy.eventId(), enemyAttackAnimSelfSwitch], true);
     })
 }

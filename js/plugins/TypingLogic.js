@@ -142,5 +142,10 @@ Game_Typing.prototype.clearPrompt = function(){
     this._prompt = "";
 }
 
+Game_Typing.prototype.reset = function(){
+    this.clearTyped();
+    this.clearPrompt();
+}
+
 const $gameTyping = new Game_Typing();
 

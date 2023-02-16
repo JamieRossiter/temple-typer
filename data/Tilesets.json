@@ -1,4 +1,8 @@
 [
 null,
-{"id":1,"flags":[16],"mode":1,"name":"","note":"","tilesetNames":["a1","","","","","temple_1","beach","",""]}
+{"id":1,"flags":[16],"mode":1,"name":"temple_battle","note":"","tilesetNames":["a1","a2","","temple_a4","temple_a5","temple_1","","",""]},
+{"id":2,"flags":[16],"mode":1,"name":"","note":"","tilesetNames":["","","","","","","","",""]},
+{"id":3,"flags":[16],"mode":1,"name":"","note":"","tilesetNames":["","","","","","","","",""]},
+{"id":4,"flags":[16],"mode":1,"name":"","note":"","tilesetNames":["","","","","","","","",""]},
+{"id":5,"flags":[16],"mode":1,"name":"","note":"","tilesetNames":["","","","","","","","",""]}
 ]

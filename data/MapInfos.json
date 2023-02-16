@@ -1,5 +1,5 @@
 [
 null,
-{"id":1,"expanded":false,"name":"MAP001","order":2,"parentId":0,"scrollX":540.3333333333334,"scrollY":304.6666666666667},
+{"id":1,"expanded":false,"name":"battle","order":2,"parentId":0,"scrollX":540.3333333333334,"scrollY":304.6666666666667},
 {"id":2,"expanded":false,"name":"enemy_spawn_map","order":1,"parentId":0,"scrollX":0,"scrollY":0}
 ]
