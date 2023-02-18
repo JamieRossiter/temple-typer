@@ -9,6 +9,6 @@ var $plugins =
 {"name":"GALV_EventSpawnerMZ","status":true,"description":"(v.1.2) Spawn events from a specified spawn map to a desired location.","parameters":{"mId":"2"}},
 {"name":"CustomKeymap","status":true,"description":"Establishes a custom keymap.","parameters":{}},
 {"name":"BetterShakeScreen","status":true,"description":"A better shake mechanic.","parameters":{}},
-{"name":"PlayerLivesWindow","status":true,"description":"Creates a window showing the number of lives the player has.","parameters":{}},
-{"name":"PlayerLogic","status":true,"description":"Extends the player class.","parameters":{}}
+{"name":"PlayerLogic","status":true,"description":"Extends the player class.","parameters":{}},
+{"name":"HUDWindows","status":true,"description":"Creates a window showing the number of lives the player has.","parameters":{}}
 ];

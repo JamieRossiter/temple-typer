@@ -7,7 +7,7 @@
 const betterShake_gameScreen_initialize_override = Game_Screen.prototype.initialize;
 Game_Screen.prototype.initialize = function() {
     betterShake_gameScreen_initialize_override.call(this);
-    this.betterShake = {};
+    this.betterShake = {};  
 };
 
 Game_Screen.prototype.startBetterShake = function(dur, power, diminish){ 

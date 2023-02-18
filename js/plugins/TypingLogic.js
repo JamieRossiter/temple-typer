@@ -55,12 +55,20 @@ Game_Typing.prototype.listenToKeyEvent = function(keyEvent){
         this._currentIncorrectKey = "";
     }
 
+    // Handle space bar press
+    if(this.isSpacePressed()){
+        this.clearPrompt();
+        this.clearTyped();
+        $gameCombat.playPlayerBombAnimation();
+    }
+
     // Check if prompt typed (TODO: Move all functions within if statement to combat logic)
     if(this.isTyped()){
+        $gamePlayer.removeBullets(1);
         $gameCombat.playPlayerShootAnimation();
         $gameScreen.startBetterShake(10, 7, false);
         $gameScreen.startFlash([255, 255, 255, 255], 5);
-        $gameCombat.playEnemyHitAnimation();
+        $gameCombat.playEnemyHitAnimation($gameCombat.getCurrentEnemy());
         $gameCombat.destroyPromptWindow(this._prompt);
         $gameCombat.getCurrentEnemy().setIsAlive(false);
         this.clearPrompt();
@@ -87,6 +95,10 @@ Game_Typing.prototype.isCorrectKeyPressed = function(){
 
 Game_Typing.prototype.isBackspacePressed = function(){
     return this._currentKey.toLowerCase() === "backspace";
+}
+
+Game_Typing.prototype.isSpacePressed = function(){
+    return this._currentKey.toLowerCase() === " ";
 }
 
 Game_Typing.prototype.addKeyToTyped = function(){

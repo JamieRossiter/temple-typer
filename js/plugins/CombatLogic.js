@@ -111,6 +111,12 @@ Game_Combat.prototype.spawnArrow = function(enemyEventId){
     this.createPromptWindows();
 }
 
+Game_Combat.prototype.spawnBomb = function(){
+    const playerX = this.findCombatPlayer().x;
+    const playerY = this.findCombatPlayer().y;
+    Galv.SPAWN.event(10, "xy", [playerX, playerY], "all", false);
+}
+
 Game_Combat.prototype.loadPrompts = function(){
     fetch("./data/words.txt")
     .then(res => res.text())
@@ -170,15 +176,20 @@ Game_Combat.prototype.playPlayerShootAnimation = function(){
     $gameSwitches.setValue(playerAnimShootSwitch, true);
 }
 
-Game_Combat.prototype.playEnemyHitAnimation = function(){
+Game_Combat.prototype.playPlayerBombAnimation = function(){
+    const playerAnimBombSwitch = 26;
+    $gameSwitches.setValue(playerAnimBombSwitch, true);
+}
+
+Game_Combat.prototype.playEnemyHitAnimation = function(enemy){
     const enemyHitAnimSelfSwitch = "A";
     const otherSelfSwitches = ["B", "C", "D"];
     // Turn off all other self switches
     otherSelfSwitches.forEach(selfSwitch => {
-        $gameSelfSwitches.setValue([$gameMap.mapId(), this.getCurrentEnemy().eventId(), selfSwitch], false);
+        $gameSelfSwitches.setValue([$gameMap.mapId(), enemy.eventId(), selfSwitch], false);
     })
     // Turn on hit anim self switch
-    $gameSelfSwitches.setValue([$gameMap.mapId(), this.getCurrentEnemy().eventId(), enemyHitAnimSelfSwitch], true);
+    $gameSelfSwitches.setValue([$gameMap.mapId(), enemy.eventId(), enemyHitAnimSelfSwitch], true);
 }
 
 Game_Combat.prototype.playEnemyAttackAnimations = function(){
@@ -217,6 +228,13 @@ Game_Combat.prototype.enemiesInAttackZone = function(){
         if(enemy.hasAttackAnimPlayed()) return;
         return enemy.x === combatPlayer.x;
     });
+}
+
+Game_Combat.prototype.killAllEnemies = function(){
+    this._enemies.forEach(enemy => {
+        this.playEnemyHitAnimation(enemy);
+        this.destroyPromptWindow(enemy.currentPrompt());
+    })
 }
 
 const $gameCombat = new Game_Combat();
