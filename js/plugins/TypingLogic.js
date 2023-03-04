@@ -28,12 +28,15 @@ Game_Typing.prototype.listenToKeyEvent = function(keyEvent){
     // Handle prompt selection
     if(this._typed.length <= 0 && this.isNormalKeyPressed() && this.promptExistsBasedOnInitialKey()){
         this.selectPromptBasedOnInitialKey();
+
         if(!this._prompt){
             this._currentIncorrectKey = key;
             return;
         }
         this.addKeyToTyped();
         this._currentIncorrectKey = "";
+
+        $gameCombat.playPlayerReadyAnimation();
         return;
     }
 

@@ -122,7 +122,7 @@ Game_Combat.prototype.loadPrompts = function(){
     .then(res => res.text())
     .then(data => {
         const capitalized = data.toUpperCase();
-        const words = capitalized.split("\n");
+        const words = capitalized.split(/\s+/);
         this._promptList = words;
     });
 }
@@ -169,6 +169,11 @@ Game_Combat.prototype.getEnemyBasedOnPrompt = function(prompt){
     return this._enemies.find(enemy => {
         return enemy.currentPrompt() === prompt;
     })
+}
+
+Game_Combat.prototype.playPlayerReadyAnimation = function(){
+    const playerAnimReadySwitch = 27;
+    $gameSwitches.setValue(playerAnimReadySwitch, true);
 }
 
 Game_Combat.prototype.playPlayerShootAnimation = function(){
