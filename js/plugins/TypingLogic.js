@@ -15,12 +15,18 @@ Game_Typing.prototype.initialize = function(){
     this._currentIncorrectKey = "";
     this._prompt = "";
     this._typed = "";
+    this._noBombs = false;
     document.addEventListener("keydown", this.listenToKeyEvent.bind(this));
 }
 
 Game_Typing.prototype.listenToKeyEvent = function(keyEvent){
 
+    // Initial conditions to be met for listening to key event
     if(!this.isReady()) return;
+    if($gameCombat.isPlayerReloading()) return;
+    if($gameCombat.isPlayerBeingAttacked()) return;
+    if($gamePlayer.isDead()) return;
+
 
     const key = keyEvent.key.toUpperCase();
     this._currentKey = key;
@@ -37,12 +43,15 @@ Game_Typing.prototype.listenToKeyEvent = function(keyEvent){
         this._currentIncorrectKey = "";
 
         $gameCombat.playPlayerReadyAnimation();
+
+        this._noBombs = false;
         return;
     }
 
     // Handle incorrect key press
     if(!this.isCorrectKeyPressed() && this.isNormalKeyPressed()){
         this._currentIncorrectKey = key;
+        this._noBombs = false;
         return;
     }
 
@@ -50,16 +59,28 @@ Game_Typing.prototype.listenToKeyEvent = function(keyEvent){
     if(this.isNormalKeyPressed()){
         this.addKeyToTyped();
         this._currentIncorrectKey = "";
+        this._noBombs = false;
     }
 
     // Handle backspace key press
     if(this.isBackspacePressed()){
         this.removeKeyFromTyped();
         this._currentIncorrectKey = "";
+        this._noBombs = false;
     }
 
     // Handle space bar press
     if(this.isSpacePressed()){
+        
+        // Handle empty bombs
+        if($gamePlayer.bombs() <= 0){
+            this._noBombs = true;
+            this._currentIncorrectKey = "";
+            return;
+        }   
+
+        // Throw bomb
+        this._noBombs = false;
         this.clearPrompt();
         this.clearTyped();
         $gameCombat.playPlayerBombAnimation();
@@ -76,6 +97,7 @@ Game_Typing.prototype.listenToKeyEvent = function(keyEvent){
         $gameCombat.getCurrentEnemy().setIsAlive(false);
         this.clearPrompt();
         this.clearTyped();
+        this._noBombs = false;
     }
 
 }
@@ -160,6 +182,10 @@ Game_Typing.prototype.clearPrompt = function(){
 Game_Typing.prototype.reset = function(){
     this.clearTyped();
     this.clearPrompt();
+}
+
+Game_Typing.prototype.noBombs = function(){
+    return this._noBombs;
 }
 
 const $gameTyping = new Game_Typing();

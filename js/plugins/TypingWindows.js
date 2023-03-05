@@ -71,19 +71,33 @@ Window_TypingError.prototype = Object.create(Window_Base.prototype);
 Window_TypingError.prototype.constructor = Window_TypingError;
 
 Window_TypingError.prototype.initialize = function(){
-    Window_Base.prototype.initialize.call(this, new Rectangle(500, 20, 500, 60));
-    this.setBackgroundType(2);
+    Window_Base.prototype.initialize.call(this, new Rectangle(800, 50, 500, 60));
+    this.setBackgroundType(0);
 }
 
 Window_TypingError.prototype.update = function(){
     this.contents.clear();
     this.hide();
+    let errorText = "";
+    let textWidth = 0;
+
     if($gameTyping.currentIncorrectKey()){
+
         this.show();
-        const errorText = `\\c[29]'${$gameTyping.currentIncorrectKey()}'\\c[0] doesn't match any prompts!`;
-        const textWidth = this.textWidth(errorText);
-        this.width = textWidth - 105;
-        this.drawTextEx(errorText, 0, 0);
+        errorText = `\\c[2]'${$gameTyping.currentIncorrectKey()}'\\c[0] doesn't match any prompts!`;
+        textWidth = this.textWidth(errorText);
+        this.width = textWidth - 65;
+        
+    } else if ($gameTyping.noBombs()){
+
+        this.show();
+        errorText = "You don't have any bombs!";
+        textWidth = this.textWidth(errorText);
+        this.width = textWidth + 65;
+
     }
-    this.x = (Graphics.boxWidth / 2) - (this.width / 2);
+
+    this.drawIcon(239, 0, 2); // Draw red 'X' icon
+    this.drawTextEx(errorText, 40, 0);
+    this.x = (Graphics.boxWidth / 2) - (this.width / 3);
 }

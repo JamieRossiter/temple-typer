@@ -25,6 +25,8 @@ Game_Combat.prototype.initialize = function(){
         "shaman_elite": 7,
         "teleporter_elite": 8
     }
+    this._isPlayerReloading = false;
+    this._isPlayerBeingAttacked = false;
     this.loadPrompts();
     this.loadConfigurations();
 }
@@ -186,6 +188,11 @@ Game_Combat.prototype.playPlayerBombAnimation = function(){
     $gameSwitches.setValue(playerAnimBombSwitch, true);
 }
 
+Game_Combat.prototype.playPlayerReloadAnimation = function(){
+    const playerAnimReloadSwitch = 28;
+    $gameSwitches.setValue(playerAnimReloadSwitch, true);
+}
+
 Game_Combat.prototype.playEnemyHitAnimation = function(enemy){
     const enemyHitAnimSelfSwitch = "A";
     const otherSelfSwitches = ["B", "C", "D"];
@@ -240,6 +247,29 @@ Game_Combat.prototype.killAllEnemies = function(){
         this.playEnemyHitAnimation(enemy);
         this.destroyPromptWindow(enemy.currentPrompt());
     })
+}
+
+Game_Combat.prototype.performReload = function(){
+    this.setIsPlayerReloading(true);
+    this.playPlayerReloadAnimation();
+    $gamePlayer.reloadBullets();
+}
+
+Game_Combat.prototype.isPlayerReloading = function(){
+    return this._isPlayerReloading;
+}
+
+Game_Combat.prototype.setIsPlayerReloading = function(reloading){
+    this._isPlayerReloading = reloading;
+}
+
+Game_Combat.prototype.isPlayerBeingAttacked = function(){
+    return this._isPlayerBeingAttacked;
+}
+
+
+Game_Combat.prototype.setIsPlayerBeingAttacked = function(attacked){
+    this._isPlayerBeingAttacked = attacked;
 }
 
 const $gameCombat = new Game_Combat();

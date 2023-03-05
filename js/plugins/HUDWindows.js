@@ -14,7 +14,7 @@ Window_PlayerLives.prototype = Object.create(Window_Base.prototype);
 Window_PlayerLives.prototype.constructor = Window_PlayerLives;
 
 Window_PlayerLives.prototype.initialize = function(){
-    Window_Base.prototype.initialize.call(this, new Rectangle(30, 40, 500, 115));
+    Window_Base.prototype.initialize.call(this, new Rectangle(30, 70, 500, 115));
     this._lifeX = 0;
     this._maxLifeX = 0; 
     this.setBackgroundType(2);
@@ -22,8 +22,7 @@ Window_PlayerLives.prototype.initialize = function(){
 
 Window_PlayerLives.prototype.update = function(){
     this.contents.clear();
-    // Draw label
-    // this.drawTextEx("\\}LIVES\\{", 7, 0);
+
     // Draw lives
     for(let i = 0; i < $gamePlayer.lives(); i++){
         if(!i){
@@ -31,7 +30,7 @@ Window_PlayerLives.prototype.update = function(){
         } else {
             this._lifeX += 45;
         }
-        this.drawCharacter("player/pirate_heads_glow", 0, this._lifeX, 130);
+        this.drawCharacter("player/pirate_heads_glow", 0, this._lifeX, 100);
     }
     // Draw max lives
     for(let i = 0; i < $gamePlayer.maxLives(); i++){
@@ -40,9 +39,10 @@ Window_PlayerLives.prototype.update = function(){
         } else {
             this._maxLifeX += 45;
         }
-        this.drawCharacter("player/pirate_heads_transparent", 0, this._maxLifeX, 130);
+        this.drawCharacter("player/pirate_heads_transparent", 0, this._maxLifeX, 100);
     }
     this.width = this._maxLifeX + 50;
+    
 }
 
 // Ammunition Window
@@ -56,10 +56,11 @@ Window_Ammunition.prototype.constructor = Window_Ammunition;
 
 Window_Ammunition.prototype.initialize = function(){
     Window_Base.prototype.initialize.call(this, new Rectangle(0, $gameCombat.findCombatPlayer().screenY() - 30, 300, 100));
-    this.drawReloadGauge(0, 22);
     this.setBackgroundType(2);
     this._reloadGauge = null;
-    this._reloading = true;
+    this._reloadTime = 0;
+    this._maxReloadTime = 120;
+    this.drawReloadGauge(0, 22);
 }
 
 Window_Ammunition.prototype.update = function(){
@@ -73,13 +74,24 @@ Window_Ammunition.prototype.update = function(){
     }
     
     // Handle reloading
-    if(this._reloading){
+    if($gameCombat.isPlayerReloading()){
 
         this.drawTextEx(`\\}Reloading...\\{`, 40, 40);
+        this._reloadGauge.show();
+        this._reloadGauge.update();
         this._reloadTime++;
+        this._reloadGauge.setValue(this._reloadTime);
+
+        // Once reloading is finished
+        if(this._reloadTime > this._maxReloadTime){
+            this._reloadTime = 0;
+            $gameCombat.setIsPlayerReloading(false);
+        }
 
         return;
     } 
+
+    this._reloadGauge.hide();
     
     // Draw label
     this.drawTextEx(`\\}${$gamePlayer.bullets()}\\{`, 17, 24);
@@ -96,7 +108,6 @@ Window_Ammunition.prototype.drawReloadGauge = function(x, y){
     this._reloadGauge = new Sprite_ReloadGauge();
     this._reloadGauge.setup($gameActors.actor(1), "hp"); // Second argument can be ignored
     this._reloadGauge.move(x, y);
-    this._reloadGauge.show();
     this.addInnerChild(this._reloadGauge);
 }
 
@@ -111,11 +122,20 @@ Sprite_ReloadGauge.prototype.constructor = Sprite_ReloadGauge;
 
 Sprite_ReloadGauge.prototype.initialize = function(){
     Sprite_Gauge.prototype.initialize.call(this);
+    this._value = 0;
+}
+
+Sprite_ReloadGauge.prototype.setValue = function(value){
+    this._value = value;
 }
 
 Sprite_ReloadGauge.prototype.drawValue = function() {
     return;
 };
+
+Sprite_ReloadGauge.prototype.drawLabel = function() {
+    return;
+}
 
 Sprite_ReloadGauge.prototype.gaugeHeight = function() {
     return 10;
@@ -138,20 +158,62 @@ Sprite_ReloadGauge.prototype.gaugeColor2 = function() {
 };
 
 Sprite_ReloadGauge.prototype.determineGaugeColor = function(){
-    return "red";
+    return "#dfc50b";
 }
 
 Sprite_ReloadGauge.prototype.currentValue = function() {
-    return 10;
+    return this._value;
 };
 
 Sprite_ReloadGauge.prototype.currentMaxValue = function() {
-    return 30;
+    return 120;
 };
+
+// Bomb window
+
+function Window_Bombs(){
+    this.initialize.apply(this, arguments);
+}
+
+Window_Bombs.prototype = Object.create(Window_Base.prototype);
+Window_Bombs.prototype.constructor = Window_Bombs;
+
+Window_Bombs.prototype.initialize = function(){
+    Window_Base.prototype.initialize.call(this, new Rectangle(30, 10, 500, 150));
+    this._bombX = 0;
+    this._maxBombX = 0; 
+    this.setBackgroundType(2);
+}
+
+Window_Bombs.prototype.update = function(){
+    this.contents.clear();
+
+    // Draw bombs
+    for(let i = 0; i < $gamePlayer.bombs(); i++){
+        if(!i){
+            this._bombX = 25;
+        } else {
+            this._bombX += 45;
+        }
+        this.drawCharacter("misc/$bomb_glow", 0, this._bombX, 70);
+    }
+    // Draw max lives
+    for(let i = 0; i < $gamePlayer.maxBombs(); i++){
+        if(!i){
+            this._maxBombX = 25;
+        } else {
+            this._maxBombX += 45;
+        }
+        this.drawCharacter("misc/$bomb_transparent", 0, this._maxBombX, 70);
+    }
+    this.width = this._maxBombX + 50;
+    
+}
 
 const playerLivesWindow_sceneMap_start_override = Scene_Map.prototype.start;
 Scene_Map.prototype.start = function(){
     playerLivesWindow_sceneMap_start_override.call(this);
     this.addChild(new Window_PlayerLives());
     this.addChild(new Window_Ammunition());
+    this.addChild(new Window_Bombs());
 }
