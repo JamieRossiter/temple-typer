@@ -77,13 +77,13 @@ Window_Ammunition.prototype.update = function(){
     if($gameCombat.isPlayerReloading()){
 
         this.drawTextEx(`\\}Reloading...\\{`, 40, 40);
-        this._reloadGauge.show();
         this._reloadGauge.update();
+        this._reloadGauge.show();
         this._reloadTime++;
         this._reloadGauge.setValue(this._reloadTime);
 
         // Once reloading is finished
-        if(this._reloadTime > this._maxReloadTime){
+        if(this._reloadTime >= this._maxReloadTime){
             this._reloadTime = 0;
             $gameCombat.setIsPlayerReloading(false);
         }

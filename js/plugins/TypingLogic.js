@@ -45,6 +45,7 @@ Game_Typing.prototype.listenToKeyEvent = function(keyEvent){
         $gameCombat.playPlayerReadyAnimation();
 
         this._noBombs = false;
+        this.playKeyboardSe();
         return;
     }
 
@@ -60,6 +61,7 @@ Game_Typing.prototype.listenToKeyEvent = function(keyEvent){
         this.addKeyToTyped();
         this._currentIncorrectKey = "";
         this._noBombs = false;
+        this.playKeyboardSe();
     }
 
     // Handle backspace key press
@@ -67,6 +69,13 @@ Game_Typing.prototype.listenToKeyEvent = function(keyEvent){
         this.removeKeyFromTyped();
         this._currentIncorrectKey = "";
         this._noBombs = false;
+    }
+
+    // Handle tab key press
+    if(this.isTabPressed()){
+        $gameCombat.performReload();
+        this._noBombs = false;
+        this._currentIncorrectKey = "";
     }
 
     // Handle space bar press
@@ -124,6 +133,10 @@ Game_Typing.prototype.isBackspacePressed = function(){
 
 Game_Typing.prototype.isSpacePressed = function(){
     return this._currentKey.toLowerCase() === " ";
+}
+
+Game_Typing.prototype.isTabPressed = function(){
+    return this._currentKey.toLowerCase() === "tab";
 }
 
 Game_Typing.prototype.addKeyToTyped = function(){
@@ -186,6 +199,15 @@ Game_Typing.prototype.reset = function(){
 
 Game_Typing.prototype.noBombs = function(){
     return this._noBombs;
+}
+
+Game_Typing.prototype.playKeyboardSe = function(){
+    AudioManager.playSe({
+        name: "keyboard_stroke",
+        pan: 0,
+        pitch: Math.floor(Math.random() * (110 - 80) + 80),
+        volume: 50
+    })
 }
 
 const $gameTyping = new Game_Typing();
